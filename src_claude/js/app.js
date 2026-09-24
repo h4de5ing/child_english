@@ -360,6 +360,7 @@ function openSettings(){
     <div class="set"><span>显示中文释义</span><button class="switch ${settings.zh?'on':''}" data-tog="zh"></button></div>
     <div class="set"><span>打开卡片自动朗读</span><button class="switch ${settings.auto?'on':''}" data-tog="auto"></button></div>
     <div class="set"><span>音效</span><button class="switch ${settings.sfx?'on':''}" data-tog="sfx"></button></div>
+    <div class="set"><span>添加到主屏幕</span>${installBtn()}</div>
     <div class="set"><span>学习进度：已认识 ${Object.values(seen).reduce((a,b)=>a+b.length,0)} 个单词</span><button class="danger" data-reset>清空进度</button></div>
     <button class="cta press" style="margin-top:12px;--c:#3A2E2A" data-close>完成</button>
   </div>`;
@@ -368,6 +369,7 @@ function openSettings(){
     if(e.target===m || e.target.closest('[data-close]')){ m.remove(); render(); return; }
     const r = e.target.closest('[data-rate]'); if(r){ settings.rate=+r.dataset.rate; save(); draw(); speak('Hello!'); }
     const tg = e.target.closest('[data-tog]'); if(tg){ settings[tg.dataset.tog]=!settings[tg.dataset.tog]; save(); draw(); }
+    if(e.target.closest('[data-install]')) doInstall().then(draw);
     if(e.target.closest('[data-reset]') && confirm('确定清空学习进度和星星吗？')){ seen={}; stars=0; save(); draw(); }
   });
   document.body.appendChild(m);
@@ -388,6 +390,34 @@ function confetti(n){
     s.style.animationDelay = (Math.random()*.3)+'s';
     document.body.appendChild(s); setTimeout(()=>s.remove(), 3000);
   }
+}
+
+/* ================= PWA：离线缓存与添加到主屏幕 ================= */
+if('serviceWorker' in navigator && location.protocol !== 'file:'){
+  window.addEventListener('load', ()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+let installEvt = null;
+window.addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); installEvt = e; });
+window.addEventListener('appinstalled', ()=>{ installEvt = null; toast('已添加到主屏幕'); });
+const isStandalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+function installBtn(){
+  if(isStandalone()) return `<span style="color:var(--ink-soft);font-size:15px">已安装 ✅</span>`;
+  return `<button class="pill" style="height:40px;font-size:15px;padding:0 16px" data-install>${installEvt?'一键添加':'查看方法'}</button>`;
+}
+async function doInstall(){
+  if(installEvt){
+    installEvt.prompt();
+    await installEvt.userChoice.catch(()=>{});
+    installEvt = null;
+    return;
+  }
+  const ua = navigator.userAgent;
+  const tip = /iPad|iPhone|iPod|Macintosh/.test(ua) && 'ontouchend' in document
+    ? 'Safari：点底部/顶部「分享」按钮 →「添加到主屏幕」'
+    : /Firefox/.test(ua)
+      ? 'Firefox：点右上角「⋮」菜单 →「添加到主屏幕」/「安装」'
+      : '浏览器菜单「⋮」→「添加到主屏幕」或「安装应用」';
+  alert(tip);
 }
 
 render();
