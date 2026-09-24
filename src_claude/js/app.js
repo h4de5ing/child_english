@@ -1,75 +1,4 @@
-/* ================= 内容数据 ================= */
-const THEMES = [
-  { id:'animals', en:'Animals', zh:'动物', emoji:'🐶', c:'#FFB547', dark:'#E08A00', q:'Where is the {w}?', items:[
-    {en:'dog',zh:'小狗',e:'🐶',s:'The dog says woof woof!'},
-    {en:'cat',zh:'小猫',e:'🐱',s:'The cat says meow!'},
-    {en:'duck',zh:'鸭子',e:'🦆',s:'The duck says quack quack!'},
-    {en:'cow',zh:'奶牛',e:'🐮',s:'The cow says moo!'},
-    {en:'pig',zh:'小猪',e:'🐷',s:'The pig says oink oink!'},
-    {en:'lion',zh:'狮子',e:'🦁',s:'The lion says roar!'},
-    {en:'elephant',zh:'大象',e:'🐘',s:'The elephant is big.'},
-    {en:'monkey',zh:'猴子',e:'🐵',s:'The monkey likes bananas.'},
-    {en:'rabbit',zh:'兔子',e:'🐰',s:'The rabbit can jump.'},
-    {en:'fish',zh:'小鱼',e:'🐟',s:'The fish can swim.'},
-  ]},
-  { id:'colors', en:'Colors', zh:'颜色', emoji:'🎨', c:'#FF6B8B', dark:'#E03A62', q:'Which one is {w}?', items:[
-    {en:'red',zh:'红色',hex:'#F44336',s:'The apple is red.'},
-    {en:'blue',zh:'蓝色',hex:'#2F80ED',s:'The sky is blue.'},
-    {en:'yellow',zh:'黄色',hex:'#FFD426',s:'The banana is yellow.'},
-    {en:'green',zh:'绿色',hex:'#3DBE5B',s:'The leaf is green.'},
-    {en:'orange',zh:'橙色',hex:'#FF8A1F',s:'The orange is orange.'},
-    {en:'purple',zh:'紫色',hex:'#9B51E0',s:'The grapes are purple.'},
-    {en:'pink',zh:'粉色',hex:'#FF8FC2',s:'The pig is pink.'},
-    {en:'brown',zh:'棕色',hex:'#8D5B3A',s:'The bear is brown.'},
-    {en:'black',zh:'黑色',hex:'#222222',s:'The night is black.'},
-    {en:'white',zh:'白色',hex:'#FFFFFF',s:'The snow is white.'},
-  ]},
-  { id:'fruits', en:'Fruits', zh:'水果', emoji:'🍎', c:'#5DC47A', dark:'#2E9A4C', q:'Where is the {w}?', items:[
-    {en:'apple',zh:'苹果',e:'🍎',s:'I like apples.'},
-    {en:'banana',zh:'香蕉',e:'🍌',s:'I like bananas.'},
-    {en:'orange',zh:'橙子',e:'🍊',s:'I like oranges.'},
-    {en:'grapes',zh:'葡萄',e:'🍇',s:'I like grapes.'},
-    {en:'strawberry',zh:'草莓',e:'🍓',s:'I like strawberries.'},
-    {en:'watermelon',zh:'西瓜',e:'🍉',s:'I like watermelon.'},
-    {en:'pear',zh:'梨',e:'🍐',s:'I like pears.'},
-    {en:'peach',zh:'桃子',e:'🍑',s:'I like peaches.'},
-    {en:'cherry',zh:'樱桃',e:'🍒',s:'I like cherries.'},
-    {en:'pineapple',zh:'菠萝',e:'🍍',s:'I like pineapples.'},
-  ]},
-  { id:'body', en:'My Body', zh:'身体部位', emoji:'🙋', c:'#4FB6F0', dark:'#1B86C4', q:'Where is the {w}?', items:[
-    {en:'eye',zh:'眼睛',e:'👁️',s:'I see with my eyes.'},
-    {en:'ear',zh:'耳朵',e:'👂',s:'I hear with my ears.'},
-    {en:'nose',zh:'鼻子',e:'👃',s:'I smell with my nose.'},
-    {en:'mouth',zh:'嘴巴',e:'👄',s:'I eat with my mouth.'},
-    {en:'tooth',zh:'牙齿',e:'🦷',s:'Brush your teeth!'},
-    {en:'hand',zh:'手',e:'✋',s:'Clap your hands!'},
-    {en:'arm',zh:'手臂',e:'💪',s:'Wave your arms!'},
-    {en:'leg',zh:'腿',e:'🦵',s:'Shake your legs!'},
-    {en:'foot',zh:'脚',e:'🦶',s:'Stamp your feet!'},
-    {en:'face',zh:'脸',e:'🙂',s:'Wash your face!'},
-  ]},
-  { id:'family', en:'Family', zh:'家人', emoji:'👨‍👩‍👧', c:'#A48BFF', dark:'#7454F0', q:'Who is {w}?', items:[
-    {en:'Daddy',zh:'爸爸',e:'👨',s:'I love you, Daddy!'},
-    {en:'Mommy',zh:'妈妈',e:'👩',s:'I love you, Mommy!'},
-    {en:'Grandpa',zh:'爷爷 / 外公',e:'👴',s:'Hello, Grandpa!'},
-    {en:'Grandma',zh:'奶奶 / 外婆',e:'👵',s:'Hello, Grandma!'},
-    {en:'brother',zh:'哥哥 / 弟弟',e:'👦',s:'This is my brother.'},
-    {en:'sister',zh:'姐姐 / 妹妹',e:'👧',s:'This is my sister.'},
-    {en:'baby',zh:'宝宝',e:'👶',s:'The baby is sleeping.'},
-    {en:'family',zh:'一家人',e:'👨‍👩‍👧‍👦',s:'I love my family!'},
-  ], quizText:{Daddy:'Where is Daddy?',Mommy:'Where is Mommy?',Grandpa:'Where is Grandpa?',Grandma:'Where is Grandma?',brother:'Where is the brother?',sister:'Where is the sister?',baby:'Where is the baby?',family:'Where is the family?'} },
-  { id:'cars', en:'Cars', zh:'汽车', emoji:'🚗', c:'#FF7F50', dark:'#E0501C', q:'Where is the {w}?', items:[
-    {en:'car',zh:'小汽车',e:'🚗',s:'Beep beep! A car!'},
-    {en:'bus',zh:'公交车',e:'🚌',s:'The bus is big.'},
-    {en:'taxi',zh:'出租车',e:'🚕',s:'The taxi is yellow.'},
-    {en:'truck',zh:'卡车',e:'🚚',s:'The truck is heavy.'},
-    {en:'fire truck',zh:'消防车',e:'🚒',s:'The fire truck is red.'},
-    {en:'police car',zh:'警车',e:'🚓',s:'Wee woo! A police car!'},
-    {en:'ambulance',zh:'救护车',e:'🚑',s:'The ambulance helps people.'},
-    {en:'tractor',zh:'拖拉机',e:'🚜',s:'The tractor is on the farm.'},
-    {en:'race car',zh:'赛车',e:'🏎️',s:'The race car is fast!'},
-  ]},
-];
+// 主题数据见 js/data.js（THEMES / GROUPS / SHAPES）
 const PRAISE = ['Great job!','Well done!','Super!','Awesome!','You got it!','Excellent!'];
 const ROUNDS = 5;
 
@@ -126,7 +55,12 @@ const $app = document.getElementById('app');
 const S = { screen:'home', theme:null, idx:0, game:null };
 const themeOf = id => THEMES.find(t=>t.id===id);
 const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const vis = (item) => item.hex ? `<span class="swatch" style="--c:${item.hex}"></span>` : item.e;
+const vis = (item) =>
+  item.hex   ? `<span class="swatch" style="--c:${item.hex}"></span>` :
+  item.shape ? `<svg class="shape" viewBox="0 0 100 100" fill="${item.fill}">${SHAPES[item.shape]}</svg>` :
+  item.n     ? `<span class="digit">${item.n}</span>` :
+  item.e;
+const learned = t => { const s = seen[t.id]||[]; return t.items.filter(it=>s.includes(it.en)).length; };
 
 function go(screen, patch={}){ Object.assign(S, patch, {screen}); render(); }
 
@@ -141,13 +75,18 @@ function render(){
 
 /* ---- 首页 ---- */
 function home(){
-  const cards = THEMES.map(t=>{
-    const n = (seen[t.id]||[]).length, pct = Math.round(n/t.items.length*100);
+  const card = t => {
+    const pct = Math.round(learned(t)/t.items.length*100);
     return `<button class="theme press" style="--c:${t.c}" data-act="open" data-id="${t.id}">
       <span class="emo">${t.emoji}</span>
       <span class="en">${t.en}</span><span class="zh">${t.zh}</span>
       <span class="progress"><i style="width:${pct}%"></i></span>
     </button>`;
+  };
+  const sections = GROUPS.map(g=>{
+    const list = THEMES.filter(t=>t.group===g.id);
+    return list.length ? `<h2 class="group">${g.en} <small class="zh">${g.zh}</small></h2>
+      <div class="themes">${list.map(card).join('')}</div>` : '';
   }).join('');
   return `<div class="screen">
     <div class="bar">
@@ -156,8 +95,8 @@ function home(){
       <button class="round hold" data-hold="parent" aria-label="家长设置">⚙️
         <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="30"/></svg></button>
     </div>
-    <div class="hello"><div class="big">Hello! 👋</div><div class="sub">选一个主题，一起说英语吧</div></div>
-    <div class="scroll"><div class="themes">${cards}</div></div>
+    <div class="hello"><div class="big">Hello! 👋</div><div class="sub">${THEMES.length} 个主题 · ${THEMES.reduce((a,t)=>a+t.items.length,0)} 个单词，选一个一起说英语吧</div></div>
+    <div class="scroll">${sections}</div>
   </div>`;
 }
 
@@ -195,6 +134,7 @@ function detail(t){
         <button class="pic" id="pic" data-act="sayWord">${vis(it)}</button>
         <div class="w">${esc(it.en)}</div>
         <div class="z">${it.zh}</div>
+        ${it.n ? `<div class="count">${(t.countEmoji||'⭐').repeat(it.n)}</div>` : ''}
         <div class="row">
           <button class="pill press" data-act="sayWord" id="pw">🔊 Word</button>
           <button class="pill press" data-act="saySent" id="ps">💬 Sentence</button>
@@ -236,7 +176,7 @@ function makeOpts(t, target){
   return shuffle([target, ...others]);
 }
 function questionText(t, it){
-  return (t.quizText && t.quizText[it.en]) || t.q.replace('{w}', it.en);
+  return it.q || t.q.replace('{w}', it.en);
 }
 function game(t){
   const g = S.game, it = g.targets[g.round];

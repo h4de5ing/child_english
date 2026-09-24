@@ -1,5 +1,6 @@
-// 每次发布新版本时修改 VERSION，旧缓存会在新 SW 激活时被清理。
-const VERSION = 'v1.0.0';
+// 每次发版：修改 VERSION，并同步修改 index.html 中 css/js 引用的 ?v= 版本号。
+// 带版本号的 URL 保证新页面不会拿到旧缓存里的脚本（新旧文件混用会导致白屏）。
+const VERSION = '1.1.0';
 const CACHE = `hello-english-${VERSION}`;
 const FONT_CACHE = 'hello-english-fonts';
 
@@ -7,8 +8,9 @@ const FONT_CACHE = 'hello-english-fonts';
 const PRECACHE = [
   './',
   './index.html',
-  './css/app.css',
-  './js/app.js',
+  `./css/app.css?v=${VERSION}`,
+  `./js/data.js?v=${VERSION}`,
+  `./js/app.js?v=${VERSION}`,
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -57,16 +59,13 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // 同源静态资源（css/js/图片/音频）：先用缓存，后台更新
+  // 同源静态资源：缓存优先（css/js 带版本号，内容变化即 URL 变化），未命中再走网络并缓存
   if (url.origin === location.origin) {
     e.respondWith(
-      caches.open(CACHE).then(c => c.match(req).then(hit => {
-        const net = fetch(req).then(res => {
-          if (res.ok) c.put(req, res.clone());
-          return res;
-        }).catch(() => hit);
-        return hit || net;
-      }))
+      caches.open(CACHE).then(c => c.match(req).then(hit => hit || fetch(req).then(res => {
+        if (res.ok) c.put(req, res.clone());
+        return res;
+      })))
     );
   }
 });

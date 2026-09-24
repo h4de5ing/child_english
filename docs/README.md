@@ -18,7 +18,7 @@ child_english/
 从项目根目录执行：
 
 ```powershell
-C:\soft\Python\Python313\python.exe -m http.server 4173 --bind 127.0.0.1 --directory .
+python.exe -m http.server 4173 --bind 127.0.0.1 --directory .
 ```
 
 打开 <http://127.0.0.1:4173/> 查看整体项目。也可双击根目录的 `index.html` 查看首页，但模块脚本和 PWA 应通过本地服务访问。Python 预览不应用 Cloudflare 的 `_headers` 规则或 HTML 路径规范化。

@@ -2,9 +2,9 @@
 // Increment this version when updating the application's offline assets.
 // Retain the prefix so an update on the same origin can remove old caches.
 const CACHE_PREFIX = 'little-sprout-docs-';
-const CACHE_NAME = CACHE_PREFIX + 'v2';
+const CACHE_NAME = CACHE_PREFIX + 'v4';
 // Cache the canonical directory URL; Workers redirects /index.html to /.
-const ASSETS = ['./', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png'];
+const ASSETS = ['./', './topics.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
 });

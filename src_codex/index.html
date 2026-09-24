@@ -21,6 +21,8 @@
     @media(max-width:360px){.hero h1{font-size:22px}.hero-copy{padding-left:17px}.hero-art{transform:scale(.58);margin-left:-15px}.daily-stars{margin-left:0}.home-note{gap:10px;font-size:8px}.topic-info small{font-size:8px}.topic-info .card-arrow{width:21px;height:21px}.parent-btn{padding:8px}.brand{gap:7px}}
     .hero{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
     .listen-button.speaking{background:#f3cf6c;outline:4px solid #f8e9bf;outline-offset:4px}
+    .lesson-pager{max-width:900px;margin:0 auto 23px;display:flex;align-items:center;justify-content:space-between;gap:8px}.lesson-pager>span{font-size:12px;color:var(--muted)}.lesson-pager button:disabled{opacity:.35}.color-dot{outline:1px solid #d9ddce}.number-picture{display:flex;flex-direction:column;align-items:center;gap:6px}.number-picture>b{font-size:44px;line-height:1;color:var(--green)}.count-dots{display:grid;grid-template-columns:repeat(5,8px);gap:5px}.count-dots i{width:8px;height:8px;border-radius:50%;background:#d69f39}.shape{display:block;width:70px;height:70px;background:#8fa7d5}.shape.circle{border-radius:50%}.shape.oval{width:85px;height:54px;border-radius:50%}.shape.rectangle{width:87px;height:52px}.shape.triangle{clip-path:polygon(50% 0,100% 100%,0 100%)}.shape.diamond{clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}.shape.star{clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 94%,50% 72%,21% 94%,32% 57%,2% 35%,39% 35%)}.shape.heart{clip-path:polygon(50% 95%,5% 50%,0 30%,10% 10%,30% 3%,50% 23%,70% 3%,90% 10%,100% 30%,95% 50%)}.word-card .picture>.emoji{font-size:clamp(44px,6vw,66px)}.quiz-choice>.emoji{font-size:clamp(45px,7vw,78px)}
+    @media(max-width:600px){.lesson-pager>span{font-size:10px}.lesson-pager .soft-btn{padding:9px 11px}.setting:has(#learning-mode){align-items:flex-start}.setting #learning-mode{min-width:112px}.word-card strong{font-size:18px}.section-heading .count{max-width:100px}}
     @media(max-width:600px){.hero{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
   </style>
@@ -37,28 +39,36 @@
   <dialog class="modal" id="modal" aria-labelledby="modal-title"><div class="modal-inner" id="modal-content"></div></dialog>
   <div class="toast" id="toast" role="status" hidden></div>
   <div class="sr-only" id="announcement" aria-live="polite"></div>
+  <script src="./topics.js"></script>
   <script>
     'use strict';
-    const TOPICS = [
-      {id:'animals',zh:'动物好朋友',en:'Animals',place:'森林里的见面会',tint:'#e5ecd3',icon:'🦁',side:'🐰',tiny:'🌿',sticker:'森林好朋友',words:[['cat','小猫','🐱'],['dog','小狗','🐶'],['rabbit','兔子','🐰'],['lion','狮子','🦁'],['elephant','大象','🐘'],['panda','熊猫','🐼']]},
-      {id:'colors',zh:'彩虹调色盘',en:'Colors',place:'把世界涂成彩虹',tint:'#ede4f1',icon:'🎨',side:'🌈',tiny:'✨',sticker:'彩虹小画家',words:[['red','红色','#eb6862'],['yellow','黄色','#f7d24c'],['blue','蓝色','#709ee8'],['green','绿色','#81b87b'],['orange','橙色','#f2a351'],['purple','紫色','#a18bd1']]},
-      {id:'fruits',zh:'水果小集市',en:'Fruits',place:'装满甜甜的小篮子',tint:'#f8e6d7',icon:'🍎',side:'🍌',tiny:'🍃',sticker:'水果小达人',words:[['apple','苹果','🍎'],['banana','香蕉','🍌'],['orange','橙子','🍊'],['grapes','葡萄','🍇'],['strawberry','草莓','🍓'],['watermelon','西瓜','🍉']]},
-      {id:'body',zh:'身体小秘密',en:'My body',place:'认识可爱的自己',tint:'#f6e3dc',icon:'👋',side:'🦶',tiny:'✨',sticker:'身体小博士',words:[['eye','眼睛','👁️'],['ear','耳朵','👂'],['nose','鼻子','👃'],['mouth','嘴巴','👄'],['hand','手','🖐️'],['foot','脚','🦶']]},
-      {id:'family',zh:'我爱我的家',en:'My family',place:'给家人一个大拥抱',tint:'#f6edcd',icon:'🏡',side:'💛',tiny:'☀️',sticker:'暖暖小家人',words:[['mom','妈妈','👩'],['dad','爸爸','👨'],['sister','姐妹','👧'],['brother','兄弟','👦'],['grandma','奶奶 / 外婆','👵'],['grandpa','爷爷 / 外公','👴']]},
-      {id:'vehicles',zh:'汽车嘟嘟嘟',en:'Vehicles',place:'出发！小小车队',tint:'#dfebef',icon:'🚙',side:'🚌',tiny:'☁️',sticker:'出发小司机',words:[['car','小汽车','🚗'],['bus','公交车','🚌'],['truck','卡车','🚚'],['taxi','出租车','🚕'],['fire engine','消防车','🚒'],['ambulance','救护车','🚑']]}
-    ];
+    const TOPICS = window.LITTLE_SPROUT_TOPICS;
+    const TOTAL_WORDS = TOPICS.reduce((sum,topic)=>sum+topic.words.length,0);
+    const PAGE_SIZE = 6;
     const app = document.getElementById('app');
     const modal = document.getElementById('modal');
     const modalContent = document.getElementById('modal-content');
     const STORAGE_KEY = 'little-sprout-prototype-v1';
-    let state = {heard:{},stickers:[],sound:true,age:'3-4',lastTopic:'animals'};
+    let state = {heard:{},stickers:[],sound:true,age:'3-4',lastTopic:'animals',learningMode:'sequential',quizCursor:{}};
+    let lessonOrder = [], lessonPage = 0, lessonModeDirty = false;
     let currentView = 'home', activeTopic = TOPICS[0], quiz = null, pendingInstall = null;
     let toastTimer, speakingTimer, speechToken = 0, gateAnswer = 0, returnFocus = null;
     function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch{toast('当前浏览器无法保存进度，本次仍然可以继续玩。');}}
     function heardCount(topic){return (state.heard[topic.id] || []).length;}
     function totalHeard(){return TOPICS.reduce((sum,topic)=>sum+heardCount(topic),0);}
-    function progressDots(n){return '<div class="progress-dots" aria-label="已听 '+n+' 个词，共 6 个">'+Array.from({length:6},(_,i)=>'<span class="'+(i<n?'done':'')+'"></span>').join('')+'</div>';}
-    function picture(word){return word[2].startsWith('#')?'<span class="color-dot" style="--swatch:'+word[2]+'" aria-hidden="true"></span>':'<span class="emoji" aria-hidden="true">'+word[2]+'</span>';}
+    function progressDots(n){return '<small>已探索 '+n+' / '+activeTopic.words.length+' 个单词</small>';}
+    function picture(word){
+      const visual=word[2];
+      if(visual.startsWith('#'))return '<span class="color-dot" style="--swatch:'+visual+'" aria-hidden="true"></span>';
+      if(visual.startsWith('shape:'))return '<span class="shape '+visual.slice(6)+'" aria-hidden="true"></span>';
+      if(visual.startsWith('number:')){const n=Number(visual.slice(7));return '<span class="number-picture" aria-hidden="true"><b>'+n+'</b><span class="count-dots">'+Array.from({length:n},()=>'<i></i>').join('')+'</span></span>';}
+      return '<span class="emoji" aria-hidden="true">'+visual+'</span>';
+    }
+    function modeLabel(){return state.learningMode==='random'?'随机学习':'顺序学习';}
+    function nextTopicId(fromCurrent=false){
+      if(state.learningMode==='random')return shuffle(TOPICS.filter(t=>t.id!==(fromCurrent?activeTopic.id:state.lastTopic)))[0].id;
+      return fromCurrent?TOPICS[(TOPICS.findIndex(t=>t.id===activeTopic.id)+1)%TOPICS.length].id:state.lastTopic;
+    }
     function toast(message){clearTimeout(toastTimer);const box=document.getElementById('toast');box.textContent=message;box.hidden=false;toastTimer=setTimeout(()=>box.hidden=true,4200);}
     function nav(view){document.querySelectorAll('nav [data-action]').forEach(button=>{const selected=button.dataset.action===view;button.classList.toggle('active',selected);if(selected)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});}
     function beginView(view){stopSpeech();currentView=view;quiz=null;nav(view==='stickers'?'stickers':'home');app.classList.remove('view-enter');window.scrollTo(0,0);}
@@ -66,8 +76,8 @@
     function renderHome(){
       beginView('home');
       app.innerHTML = '<section class="hero"><div class="hero-copy"><div class="eyebrow">HELLO, LITTLE EXPLORER</div><h1>小小手指，<br>探索大大世界。</h1><p>点一点，听一听。<br class="mobile-break">和芽芽一起，发现英语的乐趣。</p><button class="primary" data-action="start">一起去探索 <span class="arrow" aria-hidden="true">→</span></button></div><div class="hero-art" aria-hidden="true"><div class="hill"></div><div class="hill back"></div><div class="sun"></div><div class="cloud"></div><div class="hello">Hello!</div><div class="bunny"><div class="body"></div><div class="ear"></div><div class="ear right"></div><div class="face"><i class="eye"></i><i class="eye right"></i><i class="cheek"></i><i class="cheek right"></i><i class="nose"></i><i class="mouth"></i></div><div class="bib">✿</div></div><div class="float-card apple"><span class="emoji">🍎</span>apple</div><div class="float-card car"><span class="emoji">🚙</span>car</div><span class="spark s1">✧</span><span class="spark s2">✿</span><span class="grass">〃</span></div></section>'+
-      '<div class="daily"><div class="daily-left"><span class="emoji" aria-hidden="true">☀️</span><span>每天一点点，好奇多一点</span><span class="small">· 轻松玩一会儿</span></div><div class="daily-stars"><span class="emoji" aria-hidden="true">⭐</span><span>我的小贴纸 <b>'+state.stickers.length+'</b> / 6</span></div></div>'+
-      '<section aria-labelledby="topics-title"><div class="section-heading"><div><h2 id="topics-title">今天，想去哪里玩？</h2><p>选一个喜欢的小世界，点开就能玩</p></div><span class="count">6 个主题 · 36 个单词</span></div><div class="topic-grid">'+TOPICS.map((t,i)=>'<button class="topic-card" data-action="topic" data-topic="'+t.id+'" aria-label="探索'+t.zh+'，'+t.en+'"><div class="topic-art" style="--tint:'+t.tint+'"><span class="topic-badge">WORLD 0'+(i+1)+'</span><span class="orbit"></span><span class="emoji tiny" aria-hidden="true">'+t.tiny+'</span><span class="emoji" aria-hidden="true">'+t.icon+'</span><span class="emoji side" aria-hidden="true">'+t.side+'</span></div><div class="topic-info"><div><h3>'+t.zh+'</h3><small class="'+(state.stickers.includes(t.id)?'topic-done':'')+'">'+t.en+' · '+(state.stickers.includes(t.id)?'贴纸已点亮 ✓':heardCount(t)?'已探索 '+heardCount(t)+' / 6':'6 个新单词')+'</small></div><span class="card-arrow" aria-hidden="true">↗</span></div></button>').join('')+'</div></section>'+
+      '<div class="daily"><div class="daily-left"><span class="emoji" aria-hidden="true">☀️</span><span>每天一点点，好奇多一点</span><span class="small">· 轻松玩一会儿</span></div><div class="daily-stars"><span class="emoji" aria-hidden="true">⭐</span><span>我的小贴纸 <b>'+state.stickers.length+'</b> / '+TOPICS.length+'</span></div></div>'+
+      '<section aria-labelledby="topics-title"><div class="section-heading"><div><h2 id="topics-title">今天，想去哪里玩？</h2><p>选一个喜欢的小世界，点开就能玩</p></div><span class="count">'+TOPICS.length+' 个主题 · '+TOTAL_WORDS+' 个单词</span></div><div class="topic-grid">'+TOPICS.map((t,i)=>'<button class="topic-card" data-action="topic" data-topic="'+t.id+'" aria-label="探索'+t.zh+'，'+t.en+'"><div class="topic-art" style="--tint:'+t.tint+'"><span class="topic-badge">WORLD '+String(i+1).padStart(2,'0')+'</span><span class="orbit"></span><span class="emoji tiny" aria-hidden="true">'+t.tiny+'</span><span class="emoji" aria-hidden="true">'+t.icon+'</span><span class="emoji side" aria-hidden="true">'+t.side+'</span></div><div class="topic-info"><div><h3>'+t.zh+'</h3><small class="'+(state.stickers.includes(t.id)?'topic-done':'')+'">'+t.en+' · '+(state.stickers.includes(t.id)?'贴纸已点亮 ✓':heardCount(t)?'已探索 '+heardCount(t)+' / '+t.words.length:t.words.length+' 个新单词')+'</small></div><span class="card-arrow" aria-hidden="true">↗</span></div></button>').join('')+'</div></section>'+
       '<div class="home-note"><span>♬ 听一听</span><span>☝ 点一点</span><span>✧ 每个发现都值得鼓励</span></div>';
       endView();
     }
@@ -78,11 +88,14 @@
         if(!stored || typeof stored!=='object')return;
         if(typeof stored.sound==='boolean')state.sound=stored.sound;
         if(['3-4','5-6'].includes(stored.age))state.age=stored.age;
+        if(['sequential','random'].includes(stored.learningMode))state.learningMode=stored.learningMode;
         if(TOPICS.some(t=>t.id===stored.lastTopic))state.lastTopic=stored.lastTopic;
         if(Array.isArray(stored.stickers))state.stickers=[...new Set(stored.stickers.filter(id=>TOPICS.some(t=>t.id===id)))];
         for(const topic of TOPICS){
           const saved=stored.heard?.[topic.id];
           if(Array.isArray(saved))state.heard[topic.id]=[...new Set(saved.filter(i=>Number.isInteger(i)&&i>=0&&i<topic.words.length))];
+          const cursor=stored.quizCursor?.[topic.id];
+          if(Number.isInteger(cursor)&&cursor>=0)state.quizCursor[topic.id]=cursor%topic.words.length;
         }
       }catch{/* A blocked or malformed local store must not prevent play. */}
     }
@@ -106,21 +119,28 @@
       const list=state.heard[activeTopic.id] ||= [];
       if(!list.includes(index)){list.push(index);save();}
     }
-    function renderLesson(id){
+    function renderLesson(id,page=0,keepOrder=false){
       const topic=TOPICS.find(t=>t.id===id);if(!topic)return;
+      if(!keepOrder||activeTopic.id!==id||lessonOrder.length!==topic.words.length){
+        const indices=topic.words.map((_,i)=>i);
+        lessonOrder=state.learningMode==='random'?shuffle(indices):indices;
+      }
+      lessonPage=Math.max(0,Math.min(page,Math.ceil(topic.words.length/PAGE_SIZE)-1));
       beginView('lesson');activeTopic=topic;state.lastTopic=topic.id;save();
       app.innerHTML='<div class="back-row"><button class="back-btn" data-action="home">← 返回乐园</button><span id="lesson-progress">'+progressDots(heardCount(topic))+'</span></div>'+
       '<div class="lesson-header"><p class="kicker">'+topic.en.toUpperCase()+' · '+topic.place+'</p><h1>'+topic.zh+'</h1><p><span class="emoji" aria-hidden="true">👆</span> 点一点图片，听听它的英文名字</p></div>'+
-      '<div class="word-grid" style="--tint:'+topic.tint+'">'+topic.words.map((word,i)=>'<button class="word-card" data-action="word" data-index="'+i+'" aria-label="听 '+word[0]+'，'+word[1]+'"><span class="word-sound" aria-hidden="true">♪</span><span class="heard-check" '+((state.heard[topic.id]||[]).includes(i)?'':'hidden')+' aria-label="已探索">✓</span><span class="picture">'+picture(word)+'</span><strong lang="en">'+word[0]+'</strong><small>'+word[1]+'</small></button>').join('')+'</div>'+
-      '<section class="lesson-bottom"><div><strong>认识新朋友，再玩一个小游戏？</strong><p>听一听，找一找 · 3 次小发现，收获 1 张贴纸</p></div><button class="primary" data-action="quiz"><span class="emoji" aria-hidden="true">🎧</span> 听音找朋友 <span class="arrow" aria-hidden="true">→</span></button></section>';
-      endView();
+      '<div class="lesson-pager"><button class="soft-btn" data-action="page-prev" '+(lessonPage===0?'disabled':'')+'>← 上一组</button><span>'+modeLabel()+' · 第 '+(lessonPage+1)+' / '+Math.ceil(topic.words.length/PAGE_SIZE)+' 组</span><button class="soft-btn" data-action="page-next" '+((lessonPage+1)*PAGE_SIZE>=topic.words.length?'disabled':'')+'>下一组 →</button></div>'+
+      '<div class="word-grid" style="--tint:'+topic.tint+'">'+lessonOrder.slice(lessonPage*PAGE_SIZE,(lessonPage+1)*PAGE_SIZE).map(i=>{const word=topic.words[i];return '<button class="word-card" data-action="word" data-index="'+i+'" aria-label="听 '+word[0]+'，'+word[1]+'"><span class="word-sound" aria-hidden="true">♪</span><span class="heard-check" '+((state.heard[topic.id]||[]).includes(i)?'':'hidden')+' aria-label="已探索">✓</span><span class="picture">'+picture(word)+'</span><strong lang="en">'+word[0]+'</strong><small>'+word[1]+'</small></button>';}).join('')+'</div>'+
+      '<section class="lesson-bottom"><div><strong>认识新朋友，再玩一个小游戏？</strong><p>每次最多 3 个词 · 完成一组挑战，点亮主题贴纸</p></div><button class="primary" data-action="quiz"><span class="emoji" aria-hidden="true">🎧</span> 听音找朋友 <span class="arrow" aria-hidden="true">→</span></button></section>';
+      endView();document.getElementById('announcement').textContent=topic.zh+'，第 '+(lessonPage+1)+' 组';
     }
     function shuffle(items){const result=[...items];for(let i=result.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[result[i],result[j]]=[result[j],result[i]];}return result;}
     function startQuiz(){
       beginView('quiz');
-      const explored=state.heard[activeTopic.id]||[];
-      const pool=explored.length>=3?explored:activeTopic.words.map((_,i)=>i);
-      quiz={targets:shuffle(pool).slice(0,3),round:0,answered:false,options:[],optionCount:state.age==='3-4'?2:3};
+      const pool=activeTopic.words.map((_,i)=>i);
+      const cursor=state.quizCursor[activeTopic.id]||0;
+      const targets=state.learningMode==='random'?shuffle(pool).slice(0,3):Array.from({length:Math.min(3,pool.length-cursor)},(_,i)=>cursor+i);
+      quiz={targets,round:0,answered:false,options:[],optionCount:state.age==='3-4'?2:3,mode:state.learningMode,cursor};
       renderQuiz();
     }
     function renderQuiz(){
@@ -128,10 +148,10 @@
       const target=quiz.targets[quiz.round];
       const alternatives=shuffle(activeTopic.words.map((_,i)=>i).filter(i=>i!==target));
       quiz.options=shuffle([target,...alternatives.slice(0,quiz.optionCount-1)]);quiz.answered=false;
-      app.innerHTML='<div class="back-row"><button class="back-btn" data-action="lesson">← 回去认一认</button><small>'+activeTopic.zh+'</small></div><section class="quiz-container"><div class="quiz-track"><span class="emoji" aria-hidden="true">🌱</span><div class="track" role="progressbar" aria-label="小游戏进度" aria-valuemin="0" aria-valuemax="3" aria-valuenow="'+quiz.round+'"><div class="fill" style="width:'+quiz.round/3*100+'%"></div></div><small>第 '+(quiz.round+1)+' / 3 次发现</small><span class="emoji" aria-hidden="true">⭐</span></div>'+
+      app.innerHTML='<div class="back-row"><button class="back-btn" data-action="lesson">← 回去认一认</button><small>'+activeTopic.zh+'</small></div><section class="quiz-container"><div class="quiz-track"><span class="emoji" aria-hidden="true">🌱</span><div class="track" role="progressbar" aria-label="小游戏进度" aria-valuemin="0" aria-valuemax="'+quiz.targets.length+'" aria-valuenow="'+quiz.round+'"><div class="fill" style="width:'+quiz.round/quiz.targets.length*100+'%"></div></div><small>第 '+(quiz.round+1)+' / '+quiz.targets.length+' 次发现</small><span class="emoji" aria-hidden="true">⭐</span></div>'+
       '<div class="lesson-header"><h1>谁是我的好朋友？</h1><p>听一听英文，点一点下面的图片</p></div><button class="listen-button" data-action="listen"><span class="emoji" aria-hidden="true">🔊</span>再听一遍</button><p id="quiz-hint" hidden></p>'+
       '<div class="quiz-choices" style="--options:'+quiz.optionCount+'">'+quiz.options.map((index)=>'<button class="quiz-choice" data-action="answer" data-index="'+index+'" aria-label="选择'+activeTopic.words[index][1]+'">'+picture(activeTopic.words[index])+'</button>').join('')+'</div>'+
-      '<div class="quiz-feedback" id="quiz-feedback" role="status">小耳朵听一听，小手指找一找<small>可以重复听，慢慢来就好</small></div><button class="hint-btn" data-action="hint">看看文字小提示</button><button class="primary quiz-next" data-action="next" hidden>'+(quiz.round===2?'领取我的贴纸 ✧':'找到啦，继续 →')+'</button></section>';
+      '<div class="quiz-feedback" id="quiz-feedback" role="status">小耳朵听一听，小手指找一找<small>可以重复听，慢慢来就好</small></div><button class="hint-btn" data-action="hint">看看文字小提示</button><button class="primary quiz-next" data-action="next" hidden>'+(quiz.round===quiz.targets.length-1?'领取我的贴纸 ✧':'找到啦，继续 →')+'</button></section>';
       endView();listenQuiz();
     }
     function listenQuiz(){if(!quiz)return;speak(activeTopic.words[quiz.targets[quiz.round]][0],document.querySelector('.listen-button'),showHint);}
@@ -149,21 +169,23 @@
       const word=activeTopic.words[index];feedback.innerHTML='找到啦！<strong lang="en">'+word[0]+'</strong>，'+word[1]+' <span class="emoji" aria-hidden="true">✨</span><small>你的小耳朵真会发现！</small>';
       const next=document.querySelector('[data-action="next"]');next.hidden=false;next.focus({preventScroll:true});
       document.querySelector('.hint-btn').hidden=true;
-      document.querySelector('.quiz-track .fill').style.width=(quiz.round+1)/3*100+'%';
+      document.querySelector('.quiz-track .fill').style.width=(quiz.round+1)/quiz.targets.length*100+'%';
       document.querySelector('[role="progressbar"]').setAttribute('aria-valuenow',String(quiz.round+1));
       speak(word[0],button);
     }
-    function nextRound(){if(!quiz?.answered)return;if(quiz.round<2){quiz.round++;renderQuiz();}else renderResult();}
+    function nextRound(){if(!quiz?.answered)return;if(quiz.round<quiz.targets.length-1){quiz.round++;renderQuiz();}else renderResult();}
     function renderResult(){
+      const rounds=quiz.targets.length;
+      if(quiz.mode==='sequential')state.quizCursor[activeTopic.id]=(quiz.cursor+rounds)%activeTopic.words.length;
       const isNew=!state.stickers.includes(activeTopic.id);
       if(isNew)state.stickers.push(activeTopic.id);save();
       beginView('result');
-      app.innerHTML='<div class="back-row"><button class="back-btn" data-action="home">← 返回乐园</button><small>每个发现，都值得鼓励</small></div><section class="result"><div class="reward emoji" aria-hidden="true">'+activeTopic.icon+'</div><p class="eyebrow" style="justify-content:center">HIGH FIVE, LITTLE EXPLORER!</p><h1>'+(isNew?'一张新贴纸，送给你！':'又一次发现，真棒！')+'</h1><p>你完成了 3 次听音小挑战<br><strong>「'+activeTopic.sticker+'」</strong>贴纸'+(isNew?'已经放进你的收藏啦':'一直在你的收藏里哦')+'</p><div class="result-actions"><button class="primary" data-action="stickers">看看我的贴纸 <span aria-hidden="true">✧</span></button><button class="soft-btn" data-action="home">探索其他小世界 →</button></div><p style="margin-top:24px;font-size:11px">也可以歇一会儿，把新发现讲给家人听。</p></section>';
+      app.innerHTML='<div class="back-row"><button class="back-btn" data-action="home">← 返回乐园</button><small>每个发现，都值得鼓励</small></div><section class="result"><div class="reward emoji" aria-hidden="true">'+activeTopic.icon+'</div><p class="eyebrow" style="justify-content:center">HIGH FIVE, LITTLE EXPLORER!</p><h1>'+(isNew?'一张新贴纸，送给你！':'又一次发现，真棒！')+'</h1><p>你完成了 '+rounds+' 次听音小挑战<br><strong>「'+activeTopic.sticker+'」</strong>贴纸'+(isNew?'已经放进你的收藏啦':'一直在你的收藏里哦')+'</p><div class="result-actions"><button class="primary" data-action="stickers">看看我的贴纸 <span aria-hidden="true">✧</span></button><button class="soft-btn" data-action="quiz">继续本主题 →</button><button class="soft-btn" data-action="continue-topic">探索下一个小世界 →</button></div><p style="margin-top:24px;font-size:11px">也可以歇一会儿，把新发现讲给家人听。</p></section>';
       endView();document.getElementById('announcement').textContent='真棒！你获得了'+activeTopic.sticker+'贴纸。';
     }
     function renderStickers(){
       beginView('stickers');
-      app.innerHTML='<section class="sticker-heading"><p class="eyebrow" style="justify-content:center">MY LITTLE COLLECTION</p><h1>每张贴纸，都是小小的成长</h1><p>去喜欢的小世界玩一玩，收集属于你的快乐</p><div class="sticker-summary"><span class="emoji" aria-hidden="true">⭐</span> 已点亮 <strong>'+state.stickers.length+'</strong> / 6 张贴纸</div></section><div class="sticker-grid">'+TOPICS.map(t=>{const earned=state.stickers.includes(t.id);return '<article class="sticker-card '+(earned?'':'locked')+'" style="--tint:'+t.tint+'"><div class="sticker-circle emoji" aria-hidden="true">'+t.icon+'</div><h3>'+t.sticker+'</h3><small>'+(earned?'✓ 已收藏 · 你的小小成就':'完成听音小游戏就能点亮')+'</small><button data-action="topic" data-topic="'+t.id+'">'+(earned?'再去玩一次 ↗':'去发现吧 →')+'</button></article>';}).join('')+'</div>';
+      app.innerHTML='<section class="sticker-heading"><p class="eyebrow" style="justify-content:center">MY LITTLE COLLECTION</p><h1>每张贴纸，都是小小的成长</h1><p>去喜欢的小世界玩一玩，收集属于你的快乐</p><div class="sticker-summary"><span class="emoji" aria-hidden="true">⭐</span> 已点亮 <strong>'+state.stickers.length+'</strong> / '+TOPICS.length+' 张贴纸</div></section><div class="sticker-grid">'+TOPICS.map(t=>{const earned=state.stickers.includes(t.id);return '<article class="sticker-card '+(earned?'':'locked')+'" style="--tint:'+t.tint+'"><div class="sticker-circle emoji" aria-hidden="true">'+t.icon+'</div><h3>'+t.sticker+'</h3><small>'+(earned?'✓ 已收藏 · 你的小小成就':'完成听音小游戏就能点亮')+'</small><button data-action="topic" data-topic="'+t.id+'">'+(earned?'再去玩一次 ↗':'去发现吧 →')+'</button></article>';}).join('')+'</div>';
       endView();
     }
     function modalHeader(title){return '<div class="modal-head"><h2 id="modal-title">'+title+'</h2><button class="close-btn" data-action="close" aria-label="关闭弹窗">×</button></div>';}
@@ -174,8 +196,9 @@
       openModal(modalHeader('这是给大人的小角落')+'<p>请家长帮忙算一算，就可以查看进度和调整设置。</p><form class="gate-form" id="gate-form"><label for="gate-input">'+a+' + '+b+' = ?</label><div class="gate-row"><input id="gate-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" aria-label="算式答案" aria-describedby="gate-error" required><button class="primary" type="submit">进入</button></div><div class="field-error" id="gate-error" role="status"></div></form><p style="font-size:11px">一个小提醒，帮助孩子把设置交给家长。</p>');
     }
     function renderParents(){
-      openModal(modalHeader('陪芽芽，慢慢长大')+'<p>每次选一个喜欢的主题，和孩子一起听、指、玩。</p><div class="parent-stats"><div><strong>'+totalHeard()+' <span style="font-size:12px">/ 36</span></strong><small>探索过的单词</small></div><div><strong>'+state.stickers.length+' <span style="font-size:12px">/ 6</span></strong><small>收获的主题贴纸</small></div></div>'+
+      openModal(modalHeader('陪芽芽，慢慢长大')+'<p>每次选一个喜欢的主题，和孩子一起听、指、玩。</p><div class="parent-stats"><div><strong>'+totalHeard()+' <span style="font-size:12px">/ '+TOTAL_WORDS+'</span></strong><small>探索过的单词</small></div><div><strong>'+state.stickers.length+' <span style="font-size:12px">/ '+TOPICS.length+'</span></strong><small>收获的主题贴纸</small></div></div>'+
       '<div class="setting"><div><strong>英文朗读</strong><small>点击图片或听音按钮时播放</small></div><button class="toggle" role="switch" aria-label="英文朗读" aria-checked="'+state.sound+'" data-action="sound"><span></span></button></div>'+
+      '<div class="setting"><div><strong>学习顺序</strong><small>顺序：词卡按顺序展示，挑战逐组往后学。<br>随机：每次进入打乱词卡，挑战随机抽词。<br>继续探索时，也会按所选方式选择主题。</small></div><select id="learning-mode" aria-label="学习顺序"><option value="sequential" '+(state.learningMode==='sequential'?'selected':'')+'>顺序学习</option><option value="random" '+(state.learningMode==='random'?'selected':'')+'>随机学习</option></select></div>'+
       '<div class="setting"><div><strong>小游戏难度</strong><small>年龄仅作参考，可按孩子情况选择</small></div><select id="age-setting" aria-label="小游戏难度"><option value="3-4" '+(state.age==='3-4'?'selected':'')+'>3–4 岁 · 2 选 1</option><option value="5-6" '+(state.age==='5-6'?'selected':'')+'>5–6 岁 · 3 选 1</option></select></div>'+
       '<div class="parent-tip"><p><strong>轻松陪伴的小建议</strong><br>玩一小会儿就可以休息。把屏幕里的新词，变成生活里的小游戏：找找家里的 apple，挥挥自己的 hand。</p></div><p style="font-size:11px">无需账号，不申请麦克风权限。进度只保存在当前浏览器，清除浏览器数据会重置进度。朗读使用设备或浏览器提供的语音，部分语音可能需要联网。</p><button class="soft-btn wide" data-action="test-sound">♪ 试听英文：Hello, little explorer!</button><button class="primary wide" data-action="install">添加到主屏幕 ↗</button><button class="danger-btn" data-action="reset-confirm">重置本机学习进度</button>');
     }
@@ -192,7 +215,10 @@
       const button=event.target.closest('[data-action]');if(!button||button.disabled)return;
       switch(button.dataset.action){
         case 'home':renderHome();break;
-        case 'start':renderLesson(state.lastTopic);break;
+        case 'start':renderLesson(nextTopicId());break;
+        case 'continue-topic':renderLesson(nextTopicId(true));break;
+        case 'page-prev':renderLesson(activeTopic.id,lessonPage-1,true);break;
+        case 'page-next':renderLesson(activeTopic.id,lessonPage+1,true);break;
         case 'topic':renderLesson(button.dataset.topic);break;
         case 'lesson':renderLesson(activeTopic.id);break;
         case 'word':{const index=Number(button.dataset.index);if(!activeTopic.words[index])break;markHeard(index);button.querySelector('.heard-check').hidden=false;document.getElementById('lesson-progress').innerHTML=progressDots(heardCount(activeTopic));speak(activeTopic.words[index][0],button);break;}
@@ -209,13 +235,16 @@
         case 'test-sound':speak('Hello, little explorer!',button);break;
         case 'install':installApp();break;
         case 'reset-confirm':openModal(modalHeader('重新开始一段探索？')+'<p>这会清除当前浏览器中探索过的单词和贴纸，声音与难度设置会保留。</p><button class="soft-btn wide" data-action="parents">保留我的进度</button><button class="danger-btn" data-action="reset">确认清除进度</button>');break;
-        case 'reset':state.heard={};state.stickers=[];state.lastTopic='animals';save();renderHome();renderParents();toast('进度已重置，可以重新出发啦。');break;
+        case 'reset':state.heard={};state.stickers=[];state.quizCursor={};state.lastTopic='animals';save();renderHome();renderParents();toast('进度已重置，可以重新出发啦。');break;
       }
     });
     document.addEventListener('submit',event=>{if(event.target.id!=='gate-form')return;event.preventDefault();const input=document.getElementById('gate-input');if(input.value.trim()!==''&&Number(input.value)===gateAnswer)renderParents();else{document.getElementById('gate-error').textContent='再算一算，请家长帮忙填写哦。';input.value='';input.focus();}});
-    document.addEventListener('change',event=>{if(event.target.id==='age-setting'){state.age=event.target.value==='5-6'?'5-6':'3-4';save();toast('已保存，下次开始小游戏时生效。');}});
+    document.addEventListener('change',event=>{
+      if(event.target.id==='age-setting'){state.age=event.target.value==='5-6'?'5-6':'3-4';save();toast('已保存，下次开始小游戏时生效。');}
+      if(event.target.id==='learning-mode'){state.learningMode=event.target.value==='random'?'random':'sequential';lessonModeDirty=true;save();toast('已保存学习顺序，返回词卡或开始下一组挑战时生效。');}
+    });
     modal.addEventListener('click',event=>{if(event.target===modal){const rect=modal.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)closeModal();}});
-    modal.addEventListener('close',()=>{stopSpeech();if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true});else app.focus({preventScroll:true});});
+    modal.addEventListener('close',()=>{stopSpeech();if(lessonModeDirty){lessonModeDirty=false;if(currentView==='lesson')renderLesson(activeTopic.id);}if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true});else app.focus({preventScroll:true});});
     document.addEventListener('visibilitychange',()=>{if(document.hidden)stopSpeech();});
     window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();pendingInstall=event;});
     window.addEventListener('appinstalled',()=>{pendingInstall=null;toast('小乐园已添加到你的设备。');});
