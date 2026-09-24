@@ -1,0 +1,16 @@
+# Publish the root entry and both application directories.
+/*
+!/index.html
+!/src_claude/
+!/src_codex/
+!/_headers
+
+# Keep documentation, local tooling, and configuration out of public assets.
+**/.git/
+**/.wrangler/
+**/node_modules/
+**/.env*
+**/*.md
+**/wrangler.*
+**/.gitignore
+**/.assetsignore
